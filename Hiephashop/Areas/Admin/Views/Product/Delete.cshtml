@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Xóa thông tin sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    string code = ViewData["code"] != null ? ViewData["code"].ToString() : string.Empty;
+}
+<style>
+    .deleteForm {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+</style>
+
+<div class="deleteForm">
+    <form method="get" action="/Admin/Product/PostDelete/@code" class="user">
+        <h3 style="padding-bottom: 57px">Bạn đồng ý với thao tác này?</h3>
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin/Product/Index" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+
+</div>
+

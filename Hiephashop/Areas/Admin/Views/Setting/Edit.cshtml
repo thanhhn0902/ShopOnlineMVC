@@ -1,0 +1,283 @@
+﻿@using Hiephashop.Application.DTOs.Setting;
+@model SettingUpdate;
+@{
+    ViewData["Title"] = "Sửa thông tin sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .formStyle {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 50px;
+    }
+
+    .previews {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 15px auto;
+        box-shadow: 0 0 10px grey;
+    }
+
+    .previewImage {
+        width: 100px
+    }
+
+    .UploadImage {
+    }
+
+    .chooseFileCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .UploadImage::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+    }
+
+    td > input {
+        width: 100%;
+        border: none;
+        background-color: inherit;
+        padding: 15px 0px;
+    }
+
+    td {
+        padding: 0px !important;
+    }
+
+    .tableCss {
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+</style>
+<div class="formStyle">
+    <form method="post" action="" enctype="multipart/form-data" class="user" id="formSubmit">
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label>Tên bên trái</label>
+                <input type="text" class="form-control form-control-user" id="ShopNameLeft" name="ShopNameLeft"
+                       placeholder="Tên bên trái" value="@Model.ShopNameLeft">
+            </div>
+            <div class="col-sm-6">
+                <label>Tên bên phải</label>
+                <input type="text" class="form-control form-control-user" id="ShopNameRight" name="ShopNameRight"
+                       placeholder="Tên bên phải" value="@Model.ShopNameRight">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label>Số điện thoại</label>
+                <input type="text" class="form-control form-control-user" id="Phone" name="Phone"
+                       placeholder="Số điện thoại" value="@Model.Phone">
+            </div>
+            <div class="col-sm-6">
+                <label>Email</label>
+                <input type="text" class="form-control form-control-user" id="Email" name="Email"
+                       placeholder="Email" value="@Model.Email">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label>Địa chỉ</label>
+                <input type="text" class="form-control form-control-user" id="Address" name="Address"
+                       placeholder="Địa chỉ" value="@Model.Address">
+            </div>
+            <div class="col-sm-6">
+                <label>Mã nhúng google map</label>
+                <input type="text" class="form-control form-control-user" id="GoogleAddress" name="GoogleAddress"
+                       placeholder="Mã nhúng google map" value="@Model.GoogleAddress">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label>Địa chỉ mạng xã hội Twitter</label>
+                <input type="text" class="form-control form-control-user" id="Twitter" name="Twitter"
+                       placeholder="Địa chỉ mạng xã hội Twitter" value="@Model.Twitter">
+            </div>
+            <div class="col-sm-6">
+                <label>Địa chỉ mạng xã hội FaceBook</label>
+                <input type="text" class="form-control form-control-user" id="FaceBook" name="FaceBook"
+                       placeholder="Địa chỉ mạng xã hội FaceBook" value="@Model.FaceBook">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <label>Địa chỉ mạng xã hội Instagram</label>
+                <input type="text" class="form-control form-control-user" id="Instagram" name="Instagram"
+                       placeholder="Địa chỉ mạng xã hội Instagram" value="@Model.Instagram">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="chooseFileCss">
+                <p>Banner: </p>
+                <input id="Images" type="file" multiple />
+            </div>
+
+            @if (Model.InfoImage != null)
+            {
+                <div class="UploadImage">
+                    @foreach (var item in Model.InfoImage)
+                    {
+
+                        <div class="previews" data-id="@item.Id">
+                            <img class="previewImage" src="@item.Url" alt="logo" />
+                            <p>File name: @item.Name</p>
+                            <a href="javascript:void(0)" class="btn btn-danger btn-circle delImage">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="form-group tableCss">
+            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề banner</th>
+                        <th>Nội dung banner</th>
+                    </tr>
+                </thead>
+                <tbody class="bodyTable">
+                    <tr>
+                        <td>
+                            <input type="text" name="Title1" class="Title1" value="@Model.Title1" />
+                        </td>
+                        <td>
+                            <input type="text" name="Content1" class="Content1" value="@Model.Content1" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="Title2" class="Title2" value="@Model.Title2" />
+                        </td>
+                        <td>
+                            <input type="text" name="Content2" class="Content2" value="@Model.Content2" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="Title3" class="Title3" value="@Model.Title3" />
+                        </td>
+                        <td>
+                            <input type="text" name="Content3" class="Content3" value="@Model.Content3" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            let files = [];
+            let listFileDel = [];
+            let strUploadImage = function (file) {
+                return `<div class="previews"><img class="previewImage" src="${URL.createObjectURL(file)}" alt="logo" /><p>File name: ${file.name}</p><a href="javascript:void(0)" class="btn btn-danger btn-circle delImage"><i class="fas fa-trash"></i></a></div>`
+            };
+            $('#Images').change(function () {
+                //$('.UploadImage').remove();
+                let listFileAdd = $(this).prop('files');
+                files = [...files, ...listFileAdd];
+
+                if (files.length === 0) return;
+
+                if (!$('.UploadImage').length) {
+                    $('.chooseFileCss').after(`<div class="UploadImage"></div>`);
+                }
+
+                for (let i = 0; i < listFileAdd.length; i++) {
+                    $('.UploadImage').append(strUploadImage(listFileAdd[i]));
+                }
+
+                addEventDeleteImg();
+            });
+
+            function addEventDeleteImg() {
+                $('.delImage').click(function () {
+                    let index = $('.delImage').index(this);
+                    let id = $(this).parent().data('id');
+                    if (id) {
+                        listFileDel.push(id);
+                    }
+                    files.splice(index, 1);
+                    $(this).parent().remove();
+                });
+            };
+            addEventDeleteImg();
+
+            $('#formSubmit').submit(function (e) {
+                e.preventDefault();
+
+                let postData = new FormData(this);
+
+                if (files && files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        postData.append('Images', files[i]);
+                    }
+                }
+
+                if (listFileDel && listFileDel.length > 0) {
+                    postData.append('ArrayJsonFileDel', listFileDel)
+                }
+
+                $.ajax({
+                    url: '/Admin/Setting/Edit',
+                    data: postData,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (savingStatus) {
+                        window.location.href = '/Admin';
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(thrownError);
+                    }
+                });
+            });
+        });
+
+
+    </script>
+    }
+

@@ -1,0 +1,267 @@
+﻿@using Hiephashop.Application.DTOs.Category;
+@using Hiephashop.Application.DTOs.Product;
+@using Hiephashop.Application.DTOs.Supplier;
+@{
+    ViewData["Title"] = "Thêm mới thông tin sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var cateCode = (string)ViewBag.CodeCategory;
+    var supplierDropDown = (IEnumerable<SupplierDropDown>)ViewBag.SupplierDropDown;
+    var templates = (IEnumerable<CategoryDetailUpdate>)ViewBag.TemplateTable;
+}
+<style>
+    .formStyle {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 50px;
+    }
+
+    .previews {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 15px auto;
+        box-shadow: 0 0 10px grey;
+        width: 90%;
+    }
+
+    .previewImage {
+        width: 100px
+    }
+
+    .UploadImage {
+        /*overflow-y: auto;
+                                                                                            height: 300px;*/
+    }
+
+    .chooseFileCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .UploadImage::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+    }
+
+    td > input {
+        width: 100%;
+        border: none;
+        background-color: inherit;
+        padding: 15px 0px;
+    }
+
+    td {
+        padding: 0px !important;
+    }
+</style>
+<div class="formStyle">
+    <form method="post" action="" enctype="multipart/form-data" class="user" id="formSubmit">
+
+        <input type="text" name="CategoryCode" value="@cateCode" hidden />
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label>Mã</label>
+                <input type="text" class="form-control form-control-user" id="Code" name="Code"
+                       placeholder="Mã" />
+            </div>
+            <div class="col-sm-6">
+                <label>Tên</label>
+                <input type="text" class="form-control form-control-user" id="Name" name="Name"
+                       placeholder="Tên" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label>Giá</label>
+                <input type="text" class="form-control form-control-user" id="Price" name="Price"
+                       placeholder="Giá" />
+            </div>
+            <div class="col-sm-6">
+                <label>Giá sau khi giảm</label>
+                <input type="text" class="form-control form-control-user" id="Sale" name="Sale"
+                       placeholder="Giá sau khi giảm" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Tóm tắt giới thiệu sản phẩm</label>
+            <textarea name="Summary" class="form-control form-control-user" placeholder="Tóm tắt giới thiệu sản phẩm"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <input type="text" class="form-control form-control-user" id="Decription" name="Decription"
+                   placeholder="Mô tả" hidden />
+            <textarea name="content" id="editor1"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Nhà cung cấp sản phẩm</label>
+            <select class="form-control" id="SupplierCode" name="SupplierCode">
+                <option value="" selected>---Chọn mã nhà cung cấp---</option>
+                @if (supplierDropDown != null)
+                {
+                    @foreach (var item in supplierDropDown)
+                    {
+                        <option value="@item.Code">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="chooseFileCss">
+                <p>Ảnh: </p>
+                <input id="file" type="file" multiple />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <p>Danh sách chi tiết loại sản phẩm:</p>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tiêu đề</th>
+                            <th>Mô tả</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bodyTable">
+                        @foreach (var item in templates.Select((value, index) => new { index, value }))
+                        {
+                            <tr class="rowTable" data-id="@item.value.Id">
+                                <td style="text-align:center;">@(item.index + 1)</td>
+                                <td><input type="text" name="Title" class="Title" value="@item.value.Title" readonly /></td>
+                                <td>
+                                    <input type="text" name="Decription" class="Decription" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin/Product/Index" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            let files = [];
+
+            let strUploadImage = function (file) {
+                return `<div class="previews"><img class="previewImage" src="${URL.createObjectURL(file)}" alt="logo" /><p>File name: ${file.name}</p><a href="javascript:void(0)" class="btn btn-danger btn-circle delImage"><i class="fas fa-trash"></i></a></div>`;
+            }
+
+            // add event for select file
+            $('#file').change(function () {
+                $('.previews').remove();
+                $('.UploadImage').remove();
+
+                files = [...files, ...$(this).prop('files')]
+
+                if (files.length === 0) return;
+
+                $('.chooseFileCss').after(`<div class="UploadImage"></div>`);
+
+                for (let i = 0; i < files.length; i++) {
+                    $('.UploadImage').append(strUploadImage(files[i]));
+                }
+
+                $('.delImage').click(function () {
+                    let index = $('.delImage').index(this);
+                    files.splice(index, 1);
+                    $(this).parent().remove();
+                });
+            });
+
+            $('#formSubmit').submit(function (e) {
+                e.preventDefault();
+
+                listDetail = [];
+                let listInput = $('.rowTable');
+
+                let postData = new FormData(this);
+                if (files && files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        postData.append('Images', files[i]);
+                    }
+                }
+
+                if (listInput.length) {
+                    for (let i = 0; i < listInput.length; i++) {
+                        let item = listInput[i];
+                        let title = item.children[1].children[0].defaultValue;
+                        let decription = item.children[2].children[0].value;
+                        listDetail.push({
+                            CategoryId: item.attributes['data-id'].value,
+                            Title: title,
+                            Decription: decription,
+                            Order: i,
+                            Status: true,
+                            IsBold: false
+                        });
+                    }
+                    postData.append('ArrayJson', JSON.stringify(listDetail));
+                }
+
+                $.ajax({
+                    url: '/Admin/Product/Create',
+                    data: postData,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (savingStatus) {
+                        window.location.href = '/Admin/Product/Index';
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('bbbbbbbb');
+                    }
+                });
+            });
+
+            let editor = CKEDITOR.replace('editor1');
+            let editor1 = CKEDITOR.instances['editor1'];
+
+            editor.on('change', function (evt) {
+                // getData() returns CKEditor's HTML content.
+                var data = editor1.getData();
+                $('#Decription').val(data);
+            });
+        });
+
+    </script>
+    }
+

@@ -1,0 +1,288 @@
+﻿@using Hiephashop.Application.DTOs.Category;
+@model CategoryUpdate;
+@{
+    ViewData["Title"] = "Sửa thông tin loại sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var dataDropDown = (IEnumerable<CategoryDropDown>)ViewBag.DataDropDown;
+}
+<style>
+    .formStyle {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 50px;
+    }
+
+    .previews {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 15px auto;
+        box-shadow: 0 0 10px grey;
+    }
+
+    .previewImage {
+        width: 100px
+    }
+
+    .UploadImage {
+    }
+
+    .chooseFileCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .UploadImage::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+    }
+
+    td > input {
+        width: 100%;
+        border: none;
+        background-color: inherit;
+        padding: 15px 0px;
+    }
+
+    td {
+        padding: 0px !important;
+    }
+</style>
+<div class="formStyle">
+    <form method="post" action="" enctype="multipart/form-data" class="user" id="formSubmit">
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <input type="text" class="form-control form-control-user" id="Code" name="Code"
+                       placeholder="Mã" value="@Model.Code" hidden>
+                <p>@Model.Code</p>
+            </div>
+            <div class="col-sm-6">
+                <label>Tên</label>
+                <input type="text" class="form-control form-control-user" id="Name" name="Name"
+                       placeholder="Tên" value="@Model.Name">
+            </div>
+        </div>
+        <div class="form-group">
+            @*<input type="text" class="form-control form-control-user" id="ParentCode" name="ParentCode"
+            placeholder="Mã loại cha" value="@Model.ParentCode">*@
+            <label>Mã loại cha</label>
+            <select class="form-control" id="ParentCode" name="ParentCode"
+                    placeholder="Mã loại cha">
+                <option value="">---Chọn mã loại cha---</option>
+                @foreach (var item in dataDropDown)
+                {
+                    <option value="@item.Code" selected="@item.Code.Equals(Model.ParentCode)">@item.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="chooseFileCss">
+                <p>Thumnail: </p>
+                <input id="Images" name="Images" type="file" />
+            </div>
+
+            @if (Model.InfoLogo != null)
+            {
+                <div class="UploadImage">
+                    <div class="previews" data-id="@Model.InfoLogo.Id">
+                        <img class="previewImage" src="@Model.InfoLogo.Url" alt="logo" />
+                        <p>File name: @Model.InfoLogo.Name</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <p>Danh sách chi tiết loại sản phẩm:</p>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tiêu đề</th>
+                            <th>
+                                <a href="javascript:void(0)" class="btn btn-primary btn-icon-split addRowTable">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-flag"></i>
+                                    </span>
+                                    <span class="text">Thêm</span>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bodyTable">
+                        @foreach (var item in Model.ListDetail.Select((value, index) => new { index, value }))
+                        {
+                            <tr class="rowTable" data-id="@item.value.Id">
+                                <td style="text-align:center;">@(item.index + 1)</td>
+                                <td><input type="text" class="Title" value="@item.value.Title" /></td>
+                                <td style="text-align:center;">
+                                    <a href="javascript:void(0)" class="btn btn-danger btn-icon-split btnDelete @(item.index < Model.ListDetail.Count()-1 ? "hideRow" : "")">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                        <span class="text">Xóa</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin/Category/Index" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        let listDetail = [];
+        let listDetailDel = [];
+        let listDetailUpdate = [];
+        $(function () {
+            let strUploadImage = function (file) {
+                return `<div class="previews"><img class="previewImage" src="${URL.createObjectURL(file)}" alt="logo" /><p>File name: ${file.name}</p></div>`;
+            }
+            let listFileDel = [];
+            $('#Images').change(function () {
+
+                listFileDel.push($('.previews').data('id'));
+
+                $('.previews').remove();
+                $('.UploadImage').remove();
+                let files = $(this).prop('files');
+                if (files.length === 0) return;
+
+                $('.chooseFileCss').after(`<div class="UploadImage"></div>`);
+
+                $('.UploadImage').append(strUploadImage(files[0]));
+            });
+
+            // add event add row table
+            if ($('.hideRow').length > 0) {
+                $('.hideRow').hide();
+                addEventbtnDelete();
+            }
+            addEventinputTitle();
+            $('.addRowTable').click(function () {
+                let tr = function (index) {
+                    return `<tr class="rowTable"><td style="text-align:center;">${index}</td><td><input type="text" name="Title" class="Title"/></td><td style="text-align:center;"><a href="javascript:void(0)" class="btn btn-danger btn-icon-split btnDelete"><span class="icon text-white-50"><i class="fas fa-trash"></i></span><span class="text">Xóa</span></a></td></tr>`
+                };
+                let row = $('.rowTable').length;
+                if (!row) {
+                    $('.bodyTable').after(tr(row + 1));
+                } else {
+                    $('.rowTable .btnDelete').last().hide();
+                    $('.rowTable').last().after(tr(row + 1));
+                }
+
+                addEventbtnDelete();
+            });
+
+            $('#formSubmit').submit(function (e) {
+                e.preventDefault();
+                let listInput = $('.rowTable');
+
+                let postData = new FormData(this);
+                if (listFileDel && listFileDel.length > 0) {
+                    postData.append('ListFileDel', listFileDel);
+                }
+
+                if (listInput.length) {
+                    for (let i = 0; i < listInput.length; i++) {
+                        let obj = listInput[i];
+                        if (!obj.attributes['data-id']) {
+                            let value = obj.children[1].children[0].value;
+                            listDetail.push({
+                                Title: value,
+                                Order: i,
+                                Status: true,
+                                IsBold: false
+                            });
+                        }
+                    }
+                    postData.append('ArrayJsonInsert', JSON.stringify(listDetail));
+                }
+
+                if (listDetailDel.length > 0) {
+                    postData.append('ArrayJsonDel', JSON.stringify(listDetailDel));
+                }
+
+                if (listDetailUpdate.length > 0) {
+                    postData.append('ArrayJsonUpdate', JSON.stringify(listDetailUpdate));
+                }
+
+                $.ajax({
+                    url: '/Admin/Category/Edit',
+                    data: postData,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (savingStatus) {
+                        window.location.href = '/Admin/Category/Index';
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('bbbbbbbb');
+                    }
+                });
+            });
+        });
+
+        //add envent delete row table
+        function addEventbtnDelete() {
+            $('.btnDelete').click(function () {
+                let id = $(this).parent().parent().data('id');
+                listDetailDel.push(id);
+                $(this).parent().parent().remove();
+                $('.rowTable .btnDelete').last().show();
+            });
+        }
+
+        function addEventinputTitle() {
+            $('.Title').change(function () {
+                let id = $(this).parent().parent().data('id');
+                if (!id) return;
+                listDetailUpdate.push({
+                    Id: id,
+                    Title: $(this).val()
+                });
+
+            });
+        }
+    </script>
+    }
+

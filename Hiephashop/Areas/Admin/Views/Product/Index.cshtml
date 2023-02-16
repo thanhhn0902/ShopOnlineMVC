@@ -1,0 +1,172 @@
+﻿@using Hiephashop.Application.DTOs.Category;
+@using Hiephashop.Application.DTOs.Product;
+@model IEnumerable<ProductVM>
+@{
+    ViewData["Title"] = "Thông tin sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var data = Model != null ? Model.ToList() : new List<ProductVM>();
+    var dataDropDown = (IEnumerable<CategoryVM>)ViewBag.DataDropDown;
+}
+<style>
+    .title-table {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .imgLogo {
+        width: 100px;
+    }
+
+    .ChooseAdd {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+</style>
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 title-table">
+                    <h6 class="m-0 font-weight-bold text-primary">@ViewData["Title"]</h6>
+                    <div class="ChooseAdd">
+                        <form method="post" action="">
+                            @*  <select class="form-control" id="CategoryCode" name="CategoryCode"
+                            placeholder="Mã loại cha">
+                            <option value="" selected>---Chọn mã loại cha---</option>
+                            @if (dataDropDown != null)
+                            {
+                            @foreach (var item in dataDropDown)
+                            {
+                            <option value="@item.Code">@item.Name</option>
+                            }
+                            }
+                            </select>*@
+                            <select class="js-example-basic-multiple" name="states[]" id="CategoryCode">
+                                <option value="">---Chọn loại sản phẩm---</option>
+                                @if (dataDropDown != null)
+                                {
+                                    @foreach (var item in dataDropDown)
+                                    {
+                                        <optgroup label="@item.Name">
+                                            <option class="level_0" value="@item.Code">@item.Name</option>
+                                            @if (item.ListChild?.Count() > 0)
+                                            {
+                                                @foreach (var child in item.ListChild)
+                                                {
+                                                    <option class="level_1" value="@child.Code">@child.Name</option>
+                                                }
+                                            }
+                                        </optgroup>
+                                    }
+                                }
+                            </select>
+                        </form>
+                        <a href="javascript:void(0)" class="btn btn-primary btn-icon-split btnAdd">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-flag"></i>
+                            </span>
+                            <span class="text">Thêm</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">Mã</th>
+                                    <th style="width: 25%">Tên</th>
+                                    <th style="width: 10%">Price</th>
+                                    <th style="width: 10%">Sale</th>
+                                    <th style="width: 30%">Thumbnail</th>
+                                    <th style="width: 15%">Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in data)
+                                {
+                                    <tr>
+                                        <td>@item.Code</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.PriceStr</td>
+                                        <td>@item.SaleStr</td>
+                                        <td><img class="imgLogo" src="@item.Thumnail" alt="@item.Name" /></td>
+                                        <td>
+                                            <a href="/Admin/Product/Edit/@item.Code/@item.CategoryCode" class="btn btn-warning btn-icon-split">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </span>
+                                                <span class="text">Sửa</span>
+                                            </a>
+                                            <a href="/Admin/Product/Delete/@item.Code" class="btn btn-danger btn-icon-split">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                                <span class="text">Xóa</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+</div>
+<!-- End of Content Wrapper -->
+@section scripts{
+    <script>
+        $(function () {
+            let categoryCode = null;
+            $('.btnAdd').hide()
+
+            let url = window.location.pathname;
+            let arrStr = url.split('/');
+            if (arrStr.length > 4) {
+                categoryCode = arrStr.slice(-1);
+                $('#CategoryCode').val(categoryCode);
+                $('.btnAdd').show();
+            }
+            $('#CategoryCode').change(function () {
+                categoryCode = $('#CategoryCode').val();
+                if (!categoryCode) {
+                    $('.btnAdd').hide();
+                    window.location.href = '/Admin/Product/Index'
+                } else {
+                    window.location.href = '/Admin/Product/Index/' + categoryCode;
+                }
+
+            });
+
+            $('.btnAdd').click(function () {
+                window.location.href = '/Admin/Product/Create/' + categoryCode;
+            });
+
+            $(document).ready(function () {
+                $('.js-example-basic-multiple').select2({
+                    placeholder: 'Chọn mã loại sản phẩm',
+                    width: '200px',
+                    allowClear: true,
+                    theme: "classic"
+                });
+            });
+        })
+    </script>
+}

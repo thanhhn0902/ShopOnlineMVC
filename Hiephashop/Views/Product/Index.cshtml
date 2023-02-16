@@ -1,0 +1,410 @@
+﻿@using Hiephashop.Application.DTOs.Category;
+@using Hiephashop.Application.DTOs.Layout;
+@using Hiephashop.Application.DTOs.Product;
+@using Hiephashop.Ultility.Common;
+@model LayoutVM;
+@{
+    ViewData["Title"] = "Product Page";
+    var listCate = Model?.categories ?? new List<CategoryVM>();
+    var products = Model?.listProduct ?? new PaginatedList<ProductVM>();
+    var controller = "/Product";
+    var records = products?.Count();
+    var maxPrice = Model?.MaxPrice ?? 0;
+
+    var data = new
+    {
+        listProduct = products?.Select(x => new
+        {
+            code = x.Code ?? "",
+            name = x.Name ?? "",
+            summary = x.Summary ?? "",
+            decription = x.Decription ?? "",
+            price = x.Price ?? 0,
+            sale = x.Sale ?? 0,
+            status = x.Status,
+            categoryCode = x.CategoryCode ?? "",
+            supplierCode = x.SupplierCode ?? "",
+            thumnail = x.Thumnail ?? "",
+            priceStr = x.PriceStr ?? "",
+            saleStr = x.SaleStr ?? ""
+        }),
+        pageIndex = products?.PageIndex ?? 1,
+        totalPages = products?.TotalPages ?? 1,
+        hasPreviousPage = products?.HasPreviousPage ?? false,
+        hasNextPage = products?.HasNextPage ?? false
+    };
+    var json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+}
+<style>
+    #renderData {
+        display: contents;
+    }
+
+    .product-item {
+        display: flex;
+        flex-direction: column;
+        height: 96%;
+    }
+
+    .info-product {
+        margin-top: auto;
+    }
+
+    .childrenClass {
+        display: none;
+        padding-left: 50px;
+    }
+
+    .showChildren {
+        display: block;
+    }
+
+    .custom-checkbox {
+        cursor: pointer;
+    }
+
+    .custom-control-label {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .rotate90 {
+        transform: rotate(90deg);
+        transition: all 0.2s linear;
+    }
+
+    .price-slider {
+        position: relative;
+        width: 400px;
+        margin: 0 auto 20px;
+        height: 35px;
+        text-align: center;
+    }
+
+        .price-slider input {
+            pointer-events: none;
+            position: absolute;
+            left: 0;
+            top: 15px;
+            width: 100%;
+            outline: none;
+            height: 18px;
+            margin: 0;
+            padding: 0;
+            border-radius: 8px;
+        }
+
+            .price-slider input::-webkit-slider-thumb {
+                pointer-events: all;
+                position: relative;
+                z-index: 1;
+                outline: 0;
+                height: 24px;
+                widows: 24px;
+                border-radius: 12px;
+                background-color: white;
+                border: 2px solid black;
+                -webkit-appearance: none;
+            }
+
+            .price-slider input::-moz-range-thumb {
+                pointer-events: all;
+                position: relative;
+                z-index: 1;
+                outline: 0;
+                height: 24px;
+                widows: 24px;
+                border-radius: 12px;
+                background-color: white;
+                border: 2px solid black;
+                -moz-appearance: none;
+            }
+
+    input::-moz-range-track {
+        background: #ccc;
+    }
+
+    .priceRage {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+        .priceRage input {
+            text-align: center;
+        }
+
+    .btnSubmit {
+        margin-top: 35px;
+        text-align: center;
+    }
+
+    .btnFilter {
+        text-align: center;
+    }
+
+    .saleClass {
+        color: red;
+    }
+</style>
+<!-- Shop Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <!-- Shop Sidebar Start -->
+        <div class="col-lg-3 col-md-4">
+            <!-- Category Start -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Tìm kiếm theo loại sản phẩm</span></h5>
+            <div class="bg-light p-4 mb-30">
+                @if (listCate != null)
+                {
+                    @foreach (var item in listCate)
+                    {
+                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                            <input type="checkbox" class="custom-control-input" id="@item.Code">
+                            <label class="custom-control-label selectParentCate" for="@item.Code">@item.Name</label>
+                            @if (item.ListChild?.Count() > 0)
+                            {
+                                <span class="badge border font-weight-normal"> > </span>
+                            }
+                        </div>
+                        @if (item.ListChild?.Count() > 0)
+                        {
+                            <div class="childrenClass">
+                                @foreach (var child in item.ListChild)
+                                {
+                                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                        <input type="checkbox" class="custom-control-input" id="@child.Code">
+                                        <label class="custom-control-label" for="@child.Code">@child.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <!-- Category End -->
+            <!-- Price Start -->
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Tìm kiếm theo giá</span></h5>
+            <div class="bg-light" style="padding: 5px;">
+                <div class="priceRage">
+                    <input type="text" class="fromPriceShow" value="0" />
+                    <input type="text" class="toPriceShow" value="@maxPrice" />
+                </div>
+                <div class="price-slider">
+                    <input value="0" min="0" max="@maxPrice" step="1" type="range" class="fromPrice">
+                    <input value="@maxPrice" min="0" max="@maxPrice" step="1" type="range" class="toPrice">
+                </div>
+            </div>
+            <div class="btnFilter">
+                <button class="btn btn-primary px-3 btnSubmit">
+                    <i class="fa fa-search mr-1"></i> Lọc sản phẩm
+                </button>
+            </div>
+            <!-- Price End -->
+        </div>
+        <!-- Shop Sidebar End -->
+        <!-- Shop Product Start -->
+        <div class="col-lg-9 col-md-8">
+            <div class="row pb-3">
+                <div class="col-12 pb-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                            <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                        </div>
+                        <div class="ml-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown" id="choosePrice">Giá từ thấp -> cao</button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item dropdownPrice" data-id="0" href="javascript:void(0)">Giá từ thấp -> cao</a>
+                                    <a class="dropdown-item dropdownPrice" data-id="1" href="javascript:void(0)">Giá từ cao -> thấp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="renderData">
+                </div>
+
+            </div>
+        </div>
+        <!-- Shop Product End -->
+    </div>
+</div>
+<!-- Shop End -->
+@section scripts{
+    <script>
+        $(function () {
+            let template = @(json != null ? Html.Raw(json) : "");
+
+            let prod = loadProduct(template);
+            $('#renderData').append(prod);
+
+            let sortPrice = null;
+            let pageNumber = 1;
+            let categories = [];
+            let fromRange = 0;
+            let toRange = 0;
+
+            // load js  paging
+            reLoadPaging();
+
+            $('.dropdownPrice').click(function () {
+                sortPrice = $(this).data('id');
+                $('#choosePrice').text($(this).text());
+                submitForm();
+            });
+
+            $('.selectParentCate').click(function () {
+                let childs = $(this).parent().parent().find('.childrenClass');
+                let index = $('.selectParentCate').index(this);
+                let after = $(this).nextAll('.badge')[0];
+                if (!childs?.length) return;
+
+                let child = childs[index];
+                if (!child.className.includes('showChildren')) {
+                    child.classList.add('showChildren');
+                    after.classList.add('rotate90');
+                } else {
+                    child.className = 'childrenClass';
+                    after.classList.remove('rotate90');
+                }
+            });
+
+            $('.fromPrice').change(function () {
+                let value = $(this).val();
+                $('.fromPriceShow').val(value);
+            });
+
+            $('.toPrice').change(function () {
+                let value = $(this).val();
+                $('.toPriceShow').val(value);
+            });
+
+            $('.btnSubmit').click(function () {
+                categories = [];
+                fromRange = $('.fromPriceShow').val();
+                toRange = $('.toPriceShow').val();
+
+                let listCate = $('.custom-control-input');
+                let list = listCate?.map(index => { if (listCate[index].checked) return listCate[index].id });
+                for (let i = 0; list.length > 0 && i < list.length; i++) {
+                    categories.push(list[i]);
+                }
+                submitForm();
+            });
+
+            function submitForm() {
+                $.ajax({
+                    url: `@controller/GetData`,
+                    data: { PageNumber: pageNumber ?? 1, SortPrice: sortPrice ?? 0, Categories: categories, FromRange: fromRange, ToRange: toRange },
+                    type: "post",
+                    cache: false,
+                    success: function (savingStatus) {
+                        if (savingStatus) {
+                            template = loadProduct(savingStatus)
+                            $('#renderData').empty();
+                            $('#renderData').append(template);
+                            // load js  paging
+                            reLoadPaging();
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('bbbbbbbb');
+                    }
+                });
+            }
+
+            function loadProduct(products) {
+                let result = '';
+                let str = function (item) {
+                    return `<div class="col-lg-4 col-md-6 col-sm-6 pb-1 productItem">
+                                        <div class="product-item bg-light mb-4">
+                                            <div class="product-img position-relative overflow-hidden">
+                                                                <img class="img-fluid w-100" src="${item.thumnail}" alt="">
+                                                <div class="product-action">
+                                                            <a class="btn btn-outline-dark btn-square" href="/Product/Detail/${item.code}"><i class="fa fa-shopping-cart"></i></a>
+                                                            <a class="btn btn-outline-dark btn-square" href="/Product/Detail/${item.code}"><i class="far fa-heart"></i></a>
+                                                            <a class="btn btn-outline-dark btn-square" href="/Product/Detail/${item.code}"><i class="fa fa-sync-alt"></i></a>
+                                                            <a class="btn btn-outline-dark btn-square" href="/Product/Detail/${item.code}"><i class="fa fa-search"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="text-center py-4 info-product">
+                                                        <a class="h6 text-decoration-none text-truncate" href="">${item.name}</a>
+                                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                                                            <h5 class="saleClass">${item.saleStr}</h5><h6 class="text-muted ml-2"><del>${item.priceStr}</del></h6>
+                                                </div>
+                                                <div class="d-flex align-items-center justify-content-center mb-1">
+                                                    <small class="fa fa-star text-primary mr-1"></small>
+                                                    <small class="fa fa-star text-primary mr-1"></small>
+                                                    <small class="fa fa-star text-primary mr-1"></small>
+                                                    <small class="fa fa-star text-primary mr-1"></small>
+                                                    <small class="fa fa-star text-primary mr-1"></small>
+                                                    <small>(99)</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                }
+                for (let i = 0; i < products.listProduct.length; i++) {
+                    result += str(products.listProduct[i]);
+                    if (i === products.listProduct.length - 1) {
+                        result += loadPaging(products)
+                    }
+                }
+                return result;
+            }
+
+            function loadPaging(products) {
+
+                let pageIndex = function (index) {
+                    return `<li class="page-item page-index ${products.pageIndex === index ? "active" : ""}"><a class="page-link" href="javascript:void(0)">${index}</a></li>`
+                };
+                let str = `<div class="col-12">
+                                            <nav>
+                                                <ul class="pagination justify-content-center">
+                                                    <li class="page-item previousPage ${!products.hasPreviosPage ? "disabled" : ""}"><a class="page-link" href="javascript:void(0)"><span>Previous</span></a></li>`;
+                let nextPage = `<li class="page-item nextPage  ${!products.hasNextPage ? "disabled" : ""}" > <a class="page-link" href = "javascript:void(0)" > Next </a></li >
+                                                    </ul>
+                                                </nav>
+                                            </div>`;
+
+                for (let i = 1; products != null && i <= products.totalPages; i++) {
+                    str += pageIndex(i);
+                    if (i === products.totalPages) {
+                        str += nextPage;
+                    }
+                }
+                return str;
+            }
+
+
+            function reLoadPaging() {
+                $('.page-index').click(function () {
+                    submitForm();
+                });
+
+                $('.page-link').click(function () {
+                    let num = $(this).text();
+                    if (isNaN(num)) return;
+                    pageNumber = num;
+                });
+
+                $('.previousPage').click(function () {
+                    if (!$(this).hasClass('disabled')) {
+                        pageNumber = pageNumber === 1 ? 1 : Number(pageNumber ?? 2) - 1;
+                        submitForm();
+                    }
+                });
+
+                $('.nextPage').click(function () {
+                    if (!$(this).hasClass('disabled')) {
+                        pageNumber = pageNumber === template.totalPages ? template.totalPages : Number(pageNumber ?? 1) + 1;
+                        submitForm();
+                    }
+                });
+            }
+        })
+    </script>
+}

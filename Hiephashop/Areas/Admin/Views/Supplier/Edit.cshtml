@@ -1,0 +1,157 @@
+﻿@using Hiephashop.Application.DTOs.Supplier;
+@model SupplierUpdate;
+@{
+    ViewData["Title"] = "Thêm mới nhà cung cấp";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .formStyle {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 50px;
+    }
+
+    .previews {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 15px auto;
+        box-shadow: 0 0 10px grey;
+    }
+
+    .previewImage {
+        width: 100px
+    }
+
+    .UploadImage {
+    }
+
+    .chooseFileCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .UploadImage::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+    }
+</style>
+<div class="formStyle">
+    <form method="post" action="" enctype="multipart/form-data" class="user" id="formSubmit">
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label>Mã</label>
+                <input type="text" class="form-control form-control-user" id="Code" name="Code"
+                       placeholder="Mã" value="@Model.Code" hidden>
+                <p>@Model.Code</p>
+            </div>
+            <div class="col-sm-6">
+                <label>Tên</label>
+                <input type="text" class="form-control form-control-user" id="Name" name="Name"
+                       placeholder="Tên" value="@Model.Name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <textarea class="form-control form-control-user"
+                      id="Decription" name="Decription" placeholder="Mô tả" value="">@Model.Decription</textarea>
+        </div>
+
+        <div class="form-group">
+            <div class="chooseFileCss">
+                <p>Logo: </p>
+                <input id="Images" name="Images" type="file" />
+            </div>
+
+            @if (Model.InfoLogo != null)
+            {
+                <div class="UploadImage">
+                    <div class="previews" data-id="@Model.InfoLogo.Id">
+                        <img class="previewImage" src="@Model.InfoLogo.Url" alt="logo" />
+                        <p>File name: @Model.InfoLogo.Name</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin/Supplier/Index" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            let strUploadImage = function (file) {
+                return `<div class="previews"><img class="previewImage" src="${URL.createObjectURL(file)}" alt="logo" /><p>File name: ${file.name}</p></div>`;
+            }
+            let listFileDel = [];
+            $('#Images').change(function () {
+
+                listFileDel.push($('.previews').data('id'));
+
+                $('.previews').remove();
+                $('.UploadImage').remove();
+                let files = $(this).prop('files');
+                if (files.length === 0) return;
+
+                $('.chooseFileCss').after(`<div class="UploadImage"></div>`);
+
+                $('.UploadImage').append(strUploadImage(files[0]));
+            });
+
+            $('#formSubmit').submit(function (e) {
+                e.preventDefault();
+                let postData = new FormData(this);
+                if (listFileDel && listFileDel.length > 0) {
+                    postData.append('ListFileDel', listFileDel);
+                }
+                $.ajax({
+                    url: '/Admin/Supplier/Edit',
+                    data: postData,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (savingStatus) {
+                        window.location.href = '/Admin/Supplier/Index';
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('bbbbbbbb');
+                    }
+                });
+            });
+        });
+    </script>
+    }
+

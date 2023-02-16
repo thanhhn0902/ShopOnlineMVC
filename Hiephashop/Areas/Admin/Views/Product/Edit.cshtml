@@ -1,0 +1,400 @@
+﻿@using Hiephashop.Application.DTOs.Category;
+@using Hiephashop.Application.DTOs.Product;
+@using Hiephashop.Application.DTOs.Supplier;
+@model ProductUpdate;
+@{
+    ViewData["Title"] = "Sửa thông tin sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var dataDropDown = (IEnumerable<ProductDropDown>)ViewBag.DataDropDown;
+    //var cateCode = (string)ViewBag.CodeCategory;
+    var supplierDropDown = (IEnumerable<SupplierDropDown>)ViewBag.SupplierDropDown;
+    var categoryDropDown = (IEnumerable<CategoryVM>)ViewBag.CategoryDropDown;
+}
+<style>
+    .formStyle {
+        width: 700px;
+        margin: 0 auto;
+        padding-top: 50px;
+    }
+
+    .btnFormCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 50px;
+    }
+
+    .previews {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        margin: 15px auto;
+        box-shadow: 0 0 10px grey;
+    }
+
+    .previewImage {
+        width: 100px
+    }
+
+    .UploadImage {
+    }
+
+    .chooseFileCss {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid grey;
+        padding-top: 20px;
+        margin-top: 30px;
+    }
+
+    .UploadImage::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    .UploadImage::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #555;
+    }
+
+    td > input {
+        width: 100%;
+        border: none;
+        background-color: inherit;
+        padding: 15px 0px;
+    }
+
+    td {
+        padding: 0px !important;
+    }
+
+</style>
+<div class="formStyle">
+    <form method="post" action="" enctype="multipart/form-data" class="user" id="formSubmit">
+
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label>Mã</label>
+                <input type="text" class="form-control form-control-user" id="Code" name="Code"
+                       placeholder="Mã" value="@Model.Code" hidden>
+                <p>@Model.Code</p>
+            </div>
+            <div class="col-sm-6">
+                <label>Tên</label>
+                <input type="text" class="form-control form-control-user" id="Name" name="Name"
+                       placeholder="Tên" value="@Model.Name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <label>Giá</label>
+                <input type="text" class="form-control form-control-user" id="Code" name="Price"
+                       placeholder="Giá" value="@Model.Price">
+            </div>
+            <div class="col-sm-6">
+                <label>Giá sau khi giảm</label>
+                <input type="text" class="form-control form-control-user" id="Sale" name="Sale"
+                       placeholder="Giá sau khi giảm" value="@Model.Sale">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Tóm tắt giới thiệu sản phẩm</label>
+            <textarea name="Summary" class="form-control form-control-user" placeholder="Tóm tắt giới thiệu sản phẩm">@Model.Summary</textarea>
+        </div>
+        <div class="form-group">
+            <label>Mô tả</label>
+            <input type="text" class="form-control form-control-user" id="Decription" name="Decription"
+                   placeholder="Mô tả" value="@Model.Decription" hidden>
+            <textarea name="content" id="editor1"></textarea>
+        </div>
+
+        <div class="form-group">
+            @*  <select class="form-control" id="CategoryCode" name="CategoryCode">
+            <option value="">---Chọn mã loại sản phẩm---</option>
+            @if (categoryDropDown != null)
+            {
+            @foreach (var item in categoryDropDown)
+            {
+            <option value="@item.Code" selected="@(item.Code.Equals(Model.CategoryCode))">@item.Name</option>
+            }
+            }
+            </select>*@
+            <label>Loại sản phẩm</label>
+            <select class="js-example-basic-multiple" name="CategoryCode" id="CategoryCode">
+                <option value="">---Chọn loại sản phẩm---</option>
+                @if (categoryDropDown != null)
+                {
+                    @foreach (var item in categoryDropDown)
+                    {
+                        <optgroup label="@item.Name">
+                            <option class="level_0" value="@item.Code" selected="@(item.Code.Equals(Model.CategoryCode))">@item.Name</option>
+                            @if (item.ListChild?.Count() > 0)
+                            {
+                                @foreach (var child in item.ListChild)
+                                {
+                                    <option class="level_1" value="@child.Code" selected="@(item.Code.Equals(Model.CategoryCode))">@child.Name</option>
+                                }
+                            }
+                        </optgroup>
+                    }
+                }
+            </select>
+
+        </div>
+
+        <div class="form-group">
+            <label>Nhà cung cấp</label>
+            <select class="form-control" id="SupplierCode" name="SupplierCode">
+                <option value="">---Chọn mã nhà cung cấp---</option>
+                @if (supplierDropDown != null)
+                {
+                    @foreach (var item in supplierDropDown)
+                    {
+                        <option value="@item.Code" selected="@(item.Code.Equals(Model.SupplierCode))">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="chooseFileCss">
+                <p>Thumnail: </p>
+                <input id="Images" type="file" multiple />
+            </div>
+
+            @if (Model.InfoImage != null)
+            {
+                <div class="UploadImage">
+                    @foreach (var item in Model.InfoImage)
+                    {
+
+                        <div class="previews" data-id="@item.Id">
+                            <img class="previewImage" src="@item.Url" alt="logo" />
+                            <p>File name: @item.Name</p>
+                            <a href="javascript:void(0)" class="btn btn-danger btn-circle delImage">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <p>Danh sách chi tiết loại sản phẩm:</p>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tiêu đề</th>
+                            <th>Mô tả</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bodyTable">
+                        @foreach (var item in Model.ListDetail.Select((value, index) => new { index, value }))
+                        {
+                            <tr class="rowTable" data-id="@item.value.CategoryId">
+                                <td style="text-align:center;">@(item.index + 1)</td>
+                                <td>
+                                    <input type="text" class="Title" value="@item.value.Title" />
+                                </td>
+                                <td>
+                                    <input type="text" class="Decription" value="@item.value.Description" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="btnFormCss">
+            <input type="submit" class="btn btn-primary btn-user btn-block" value="Lưu lại" />
+            <a href="/Admin/Product/Index" class="btn btn-google btn-user btn-block" style="margin:0;">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            let listDetail = [];
+            let listDetailDel = [];
+            let listDetailUpdate = [];
+            let files = [];
+            let strUploadImage = function (file) {
+                return `<div class="previews"><img class="previewImage" src="${URL.createObjectURL(file)}" alt="logo" /><p>File name: ${file.name}</p><a href="javascript:void(0)" class="btn btn-danger btn-circle delImage"><i class="fas fa-trash"></i></a></div>`;
+            }
+            let listFileDel = [];
+            $('#Images').change(function () {
+                //$('.UploadImage').remove();
+                let listFileAdd = $(this).prop('files');
+                files = [...files, ...listFileAdd];
+
+                if (files.length === 0) return;
+
+                if (!$('.UploadImage').length) {
+                    $('.chooseFileCss').after(`<div class="UploadImage"></div>`);
+                }
+
+                for (let i = 0; i < listFileAdd.length; i++) {
+                    $('.UploadImage').append(strUploadImage(listFileAdd[i]));
+                }
+            });
+
+            (function addEventDeleteImg() {
+                $('.delImage').click(function () {
+                    let index = $('.delImage').index(this);
+                    let id = $(this).parent().data('id');
+                    if (id) {
+                        listFileDel.push(id);
+                    }
+                    files.splice(index, 1);
+                    $(this).parent().remove();
+                });
+            })();
+
+            // add event add row table
+            if ($('.hideRow').length > 0) {
+                $('.hideRow').hide();
+                addEventbtnDelete();
+                addEventinputTitle();
+            }
+
+            $('.addRowTable').click(function () {
+                let tr = function (index) {
+                    return `<tr class="rowTable"><td style="text-align:center;">${index}</td><td><input type="text" name="Title" class="Title"/></td><td style="text-align:center;"><a href="javascript:void(0)" class="btn btn-danger btn-icon-split btnDelete"><span class="icon text-white-50"><i class="fas fa-trash"></i></span><span class="text">Xóa</span></a></td></tr>`
+                };
+                let row = $('.rowTable').length;
+                if (!row) {
+                    $('.bodyTable').after(tr(row + 1));
+                } else {
+                    $('.rowTable .btnDelete').last().hide();
+                    $('.rowTable').last().after(tr(row + 1));
+                }
+
+                addEventbtnDelete();
+
+                addEventinputTitle();
+            });
+
+            $('#formSubmit').submit(function (e) {
+                e.preventDefault();
+                let listInput = $('.rowTable');
+
+                let postData = new FormData(this);
+
+                if (files && files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        postData.append('Images', files[i]);
+                    }
+                }
+
+                if (listFileDel && listFileDel.length > 0) {
+                    postData.append('ArrayJsonFileDel', listFileDel)
+                }
+
+                if (listInput.length) {
+                    for (let i = 0; i < listInput.length; i++) {
+                        let item = listInput[i];
+                        let title = item.children[1].children[0].defaultValue;
+                        let decription = item.children[2].children[0].value;
+                        listDetail.push({
+                            CategoryId: item.attributes['data-id'].value,
+                            Title: title,
+                            Decription: decription,
+                            Order: i,
+                            Status: true,
+                            IsBold: false
+                        });
+                    }
+                    postData.append('ArrayJsonInsert', JSON.stringify(listDetail));
+                }
+
+                $.ajax({
+                    url: '/Admin/Product/Edit',
+                    data: postData,
+                    type: "post",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (savingStatus) {
+                        window.location.href = '/Admin/Product/Index';
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('bbbbbbbb');
+                    }
+                });
+            });
+
+
+            //add envent delete row table
+            function addEventbtnDelete() {
+                $('.btnDelete').click(function () {
+                    let id = $(this).parent().parent().data('id');
+                    listDetailDel.push(id);
+                    $(this).parent().parent().remove();
+                    $('.rowTable .btnDelete').last().show();
+                });
+            }
+
+            function addEventinputTitle() {
+                $('.Title').change(function () {
+                    let id = $(this).parent().parent().data('id');
+                    if (!id) return;
+                    listDetailUpdate.push({
+                        Id: id,
+                        Title: $(this).val()
+                    });
+
+                });
+            }
+
+            let strUrl = window.location.pathname.split('/');
+            if (strUrl?.length > 5) {
+                $('#CategoryCode').val(strUrl[strUrl.length - 1]);
+            };
+            $('#CategoryCode').change(function () {
+                let cateCode = $(this).val();
+                if (strUrl?.length < 6) return;
+                let productCode = strUrl[strUrl.length - 2];
+                window.location.href = `/Admin/Product/Edit/${productCode}/${cateCode}`;
+            });
+
+            $(document).ready(function () {
+                $('.js-example-basic-multiple').select2({
+                    placeholder: 'Chọn mã loại sản phẩm',
+                    width: '100%',
+                    allowClear: true,
+                    theme: "classic"
+                });
+            });
+
+            let editor = CKEDITOR.replace('editor1');
+            let editor1 = CKEDITOR.instances['editor1'];
+            editor1.setData($('#Decription').val());
+
+            editor.on('change', function (evt) {
+                // getData() returns CKEditor's HTML content.
+                var data = editor1.getData();
+                $('#Decription').val(data);
+            });
+        });
+
+
+    </script>
+    }
+

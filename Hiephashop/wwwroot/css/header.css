@@ -1,0 +1,55 @@
+﻿.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 150px;
+}
+
+.right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 100px;
+    width: 100%;
+}
+
+.search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.search>input {
+    width: 100%;
+}
+
+.infor {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.infor-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-user {
+    display: flex;
+    flex-direction: column;
+}
+
+.infor-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-total {
+    display: flex;
+    flex-direction: column;
+}
