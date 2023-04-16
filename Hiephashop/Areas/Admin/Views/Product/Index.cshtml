@@ -97,10 +97,10 @@
                                 {
                                     <tr>
                                         <td>@item.Code</td>
-                                        <td>@item.Name</td>
+                                        <td style="max-width: 120px">@item.Name</td>
                                         <td>@item.PriceStr</td>
                                         <td>@item.SaleStr</td>
-                                        <td><img class="imgLogo" src="@item.Thumnail" alt="@item.Name" /></td>
+                                        <td><img class="imgLogo" src="@item.Thumnail" alt="@item.Name" loading="lazy"/></td>
                                         <td>
                                             <a href="/Admin/Product/Edit/@item.Code/@item.CategoryCode" class="btn btn-warning btn-icon-split">
                                                 <span class="icon text-white-50">

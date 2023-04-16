@@ -57,7 +57,7 @@ namespace Hiephashop.Web.Areas.Admin.Controllers
                         ViewData["MessageError"] = check;
                         return View();
                     }
-                    return RedirectToAction(nameof(Index));
+                    return Redirect("/Admin/Category");
                 }
                 return View();
             }
@@ -77,7 +77,7 @@ namespace Hiephashop.Web.Areas.Admin.Controllers
             {
                 return View(obj);
             }
-            return RedirectToAction(nameof(Index));
+            return Redirect("/Admin/Category");
         }
 
         // POST: SuppilerController/Edit/5
@@ -101,7 +101,7 @@ namespace Hiephashop.Web.Areas.Admin.Controllers
                         ViewData["MessageError"] = check;
                         return View();
                     }
-                    return RedirectToAction(nameof(Index));
+                    return Redirect("/Admin/Category");
                 }
                 return Edit(request.Code);
             }
@@ -134,7 +134,7 @@ namespace Hiephashop.Web.Areas.Admin.Controllers
                         ViewData["MessageError"] = check;
                         return View();
                     }
-                    return RedirectToAction(nameof(Index));
+                    return Redirect("/Admin/Category");
                 }
                 return View();
             }

@@ -146,7 +146,7 @@ namespace Hiephashop.Application.Service.products
                     dbcontext.Products.Update(obj);
 
                     //delete detail
-                    var del = dbcontext.ProductDetails.Where(p => p.ProductCode.Equals(obj.Code));
+                    var del = dbcontext.ProductDetails.Where(p => p.ProductCode.Equals(obj.Code)).ToList();
                     if (del?.Count() > 0)
                     {
                         dbcontext.ProductDetails.RemoveRange(del);
@@ -196,7 +196,7 @@ namespace Hiephashop.Application.Service.products
             {
                 using (var dbcontext = new ShopDbContext(_options))
                 {
-                    var list = dbcontext.Products.Where(o => o.Status);
+                    var list = dbcontext.Products.Where(o => o.Status).ToList();
                     var showList = new List<ProductVM>();
                     foreach (var item in list)
                     {
@@ -211,7 +211,7 @@ namespace Hiephashop.Application.Service.products
                             Price = item.Price,
                             Sale = item.Sale,
                             PriceStr = CommonFunction.FormatCurrency(item.Price == null ? "0" : item.Price.ToString()),
-                            SaleStr = CommonFunction.FormatCurrency(item.Price == null ? "0" : item.Sale.ToString()),
+                            SaleStr = CommonFunction.FormatCurrency(item.Sale == null ? "0" : item.Sale.ToString()),
                             CategoryCode = item.CategoryCode,
                             SupplierCode = item.SupplierCode,
                             Thumnail = files == null ? null : files.Url,
@@ -266,13 +266,13 @@ namespace Hiephashop.Application.Service.products
                         Name = obj.Name,
                         Summary = obj.Summary,
                         Decription = obj.Decription,
-                        Price = obj.Price,
-                        Sale = obj.Sale,
+                        Price = obj.Price ?? 0,
+                        Sale = obj.Sale ?? 0,
                         CategoryCode = obj.CategoryCode,
                         SupplierCode = obj.SupplierCode,
                         ListDetail = details.ToList(),
                         PriceStr = CommonFunction.FormatCurrency(obj.Price == null ? "0" : obj.Price.ToString()),
-                        SaleStr = CommonFunction.FormatCurrency(obj.Price == null ? "0" : obj.Sale.ToString())
+                        SaleStr = CommonFunction.FormatCurrency(obj.Sale == null ? "0" : obj.Sale.ToString())
                     };
 
                     if (files != null)
@@ -285,7 +285,7 @@ namespace Hiephashop.Application.Service.products
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new ProductUpdate();
             }
         }
 
@@ -302,7 +302,7 @@ namespace Hiephashop.Application.Service.products
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new ProductDetail();
             }
         }
     }

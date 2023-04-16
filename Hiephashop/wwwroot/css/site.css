@@ -52,7 +52,7 @@ body {
   padding: 20px;
 }*/
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 500px) {
     .price-slider {
         width: 310px !important;
     }

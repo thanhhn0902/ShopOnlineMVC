@@ -25,9 +25,21 @@
         margin-top: auto;
     }
 
+        .info-product > a, h5, h6 {
+            display: inline-block;
+            max-width: 120px;
+        }
+
     .saleClass {
         color: red;
     }
+
+    @@media screen and (min-width: 900px) {
+        .info-product > a, h5, h6 {
+            max-width: 250px;
+        }
+    }
+
 </style>
 
 <!-- Carousel Start -->
@@ -107,13 +119,13 @@
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                 <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
-                <h5 class="font-weight-semi-bold m-0">Miễn phí vận chuyển</h5>
+                <h5 class="font-weight-semi-bold m-0">Vận chuyển toàn quốc</h5>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center bg-light mb-4" style="padding: 30px;">
                 <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
-                <h5 class="font-weight-semi-bold m-0">Trả hàng trong 14 ngày</h5>
+                <h5 class="font-weight-semi-bold m-0">Trả hàng trong 7 ngày</h5>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
@@ -134,7 +146,7 @@
             @foreach (var item in listCate)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                    <a class="text-decoration-none" href="#">
+                    <a class="text-decoration-none" href="@urlProductPage/@item.Code">
                         <div class="cat-item d-flex align-items-center mb-4">
                             <div class="overflow-hidden" style="width: 100px; height: 100px;">
                                 <img class="img-fluid" src="@item.Thumnail" alt="">
@@ -160,7 +172,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="@listProduct[i].Thumnail" alt="">
+                        <img class="img-fluid w-100" src="@listProduct[i].Thumnail" alt="" loading="lazy">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href="/Product/Detail/@listProduct[i].Code"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="/Product/Detail/@listProduct[i].Code"><i class="far fa-heart"></i></a>
@@ -169,7 +181,7 @@
                         </div>
                     </div>
                     <div class="text-center py-4 info-product">
-                        <a class="h6 text-decoration-none text-truncate" href="">@listProduct[i].Name</a>
+                        <a class="h6 text-decoration-none text-truncate" href="/Product/Detail/@listProduct[i].Code">@listProduct[i].Name</a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
                             <h5 class="saleClass">@listProduct[i].SaleStr</h5><h6 class="text-muted ml-2"><del>@listProduct[i].PriceStr</del></h6>
                         </div>
@@ -225,7 +237,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
                         <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="@listProduct[i].Thumnail" alt="">
+                            <img class="img-fluid w-100" src="@listProduct[i].Thumnail" alt="" loading="lazy">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark btn-square" href="/Product/Detail/@listProduct[i].Code"><i class="fa fa-shopping-cart"></i></a>
                                 <a class="btn btn-outline-dark btn-square" href="/Product/Detail/@listProduct[i].Code"><i class="far fa-heart"></i></a>
@@ -234,7 +246,7 @@
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <a class="h6 text-decoration-none text-truncate" href="">@listProduct[i].Name</a>
+                            <a class="h6 text-decoration-none text-truncate" href="/Product/Detail/@listProduct[i].Code">@listProduct[i].Name</a>
                             <div class="d-flex align-items-center justify-content-center mt-2">
                                 <h5 class="saleClass">@listProduct[i].SaleStr</h5><h6 class="text-muted ml-2"><del>@listProduct[i].PriceStr</del></h6>
                             </div>

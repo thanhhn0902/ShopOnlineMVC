@@ -31,7 +31,15 @@ namespace Hiephashop.Web.Controllers
 
             if (!string.IsNullOrEmpty(categoryCode) && !categoryCode.Equals("undefined"))
             {
-                listProduct = listProduct.Where(x => categoryCode.Equals(x.CategoryCode));
+                var children = _categoryService.GetAll().Where(x => categoryCode.Equals(x.ParentCode));
+                if (children != null && children?.Count() > 0)
+                {
+                    listProduct = listProduct.Where(x => children.Any(t => t.Code.Equals(x.CategoryCode)));
+                }
+                else
+                {
+                    listProduct = listProduct.Where(x => categoryCode.Equals(x.CategoryCode));
+                }
             }
 
             if (!string.IsNullOrEmpty(searhName) && !searhName.Equals("undefined"))

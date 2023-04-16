@@ -221,7 +221,7 @@ namespace Hiephashop.Application.Service.Categories
             {
                 using (var dbcontext = new ShopDbContext(_options))
                 {
-                    var list = dbcontext.Categories.Where(o => o.Status);
+                    var list = dbcontext.Categories.Where(o => o.Status).ToList();
                     var showList = new List<CategoryRequest>();
                     foreach (var item in list)
                     {
@@ -286,7 +286,7 @@ namespace Hiephashop.Application.Service.Categories
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new CategoryUpdate();
             }
         }
 
@@ -297,13 +297,14 @@ namespace Hiephashop.Application.Service.Categories
                 using (var dbcontext = new ShopDbContext(_options))
                 {
                     var obj = dbcontext.CategoryDetails.SingleOrDefault(x => x.Id.Equals(id));
+                    if (obj == null) return new CategoryDetail();
                     return obj;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new CategoryDetail();
             }
         }
 
@@ -314,7 +315,7 @@ namespace Hiephashop.Application.Service.Categories
                 using (var dbcontext = new ShopDbContext(_options))
                 {
 
-                    var list = dbcontext.Categories.Where(o => o.Status && string.IsNullOrEmpty(o.ParentCode));
+                    var list = dbcontext.Categories.Where(o => o.Status && string.IsNullOrEmpty(o.ParentCode)).ToList() ;
                     var showList = new List<CategoryVM>();
                     foreach (var item in list)
                     {

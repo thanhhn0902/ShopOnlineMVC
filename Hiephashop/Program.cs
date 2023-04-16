@@ -5,7 +5,9 @@ using Hiephashop.Application.Service.Setting;
 using Hiephashop.Application.Service.Suppliers;
 using Hiephashop.Application.Service.Users;
 using Hiephashop.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +31,6 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

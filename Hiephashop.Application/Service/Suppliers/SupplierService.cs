@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Hiephashop.Application.Service.Files;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Hiephashop.Application.Service.Suppliers
 {
@@ -145,7 +146,7 @@ namespace Hiephashop.Application.Service.Suppliers
             {
                 using (var dbcontext = new ShopDbContext(_options))
                 {
-                    var list = dbcontext.Suppliers.Where(o => o.Status);
+                    var list = dbcontext.Suppliers.Where(o => o.Status).ToList();
                     var showList = new List<SupplierRequest>();
 
                     foreach (var item in list)
@@ -166,7 +167,7 @@ namespace Hiephashop.Application.Service.Suppliers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new List<SupplierRequest>();
             }
         }
 
@@ -196,7 +197,7 @@ namespace Hiephashop.Application.Service.Suppliers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new SupplierUpdate();
             }
         }
     }

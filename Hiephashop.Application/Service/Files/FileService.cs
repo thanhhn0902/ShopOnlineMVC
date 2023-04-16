@@ -131,7 +131,16 @@ namespace Hiephashop.Application.Service.Files
                 using (var dbcontext = new ShopDbContext(_options))
                 {
                     var check = StatusCRUD.Success;
-                    var listFileProduct = dbcontext.Files.Where(x => x.ProductCode.Equals(productCode));
+                    var listFileProduct = new List<Data.Entities.Files>();
+                    if (productCode.Equals(SessionName.SettingCode))
+                    {
+                        listFileProduct = dbcontext.Files.Where(x => productCode.Equals(x.SettingCode)).ToList();
+                    }
+                    else
+                    {
+                        listFileProduct = dbcontext.Files.Where(x => productCode.Equals(x.ProductCode)).ToList();
+                    }
+
                     foreach (var file in files.Select((value, index) => new { index, value }))
                     {
                         //get file extension

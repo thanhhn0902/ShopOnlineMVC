@@ -133,6 +133,7 @@
 
         .priceRage input {
             text-align: center;
+            width: 150px;
         }
 
     .btnSubmit {
@@ -146,6 +147,15 @@
 
     .saleClass {
         color: red;
+    }
+
+    @@media screen and (max-width: 1833px) {
+        .priceRage input {
+            width: 100%;
+        }
+        .price-slider {
+            width: 100%;
+        }
     }
 </style>
 <!-- Shop Start -->
@@ -292,6 +302,7 @@
                 for (let i = 0; list.length > 0 && i < list.length; i++) {
                     categories.push(list[i]);
                 }
+                pageNumber = null;
                 submitForm();
             });
 

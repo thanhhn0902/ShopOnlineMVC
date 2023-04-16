@@ -127,9 +127,12 @@ namespace Hiephashop.Application.Service.Users
                     }
 
                     //obj.Code = request.Code;
-                    obj.UserName = request.UserName;
+                    //obj.UserName = request.UserName;
                     obj.Name = request.Name;
-                    obj.Password = CommonFunction.MD5Hash(request.Password);
+                    if (!string.IsNullOrEmpty(request.Password))
+                    {
+                        obj.Password = CommonFunction.MD5Hash(request.Password);
+                    }
                     obj.Phone = request.Phone;
                     obj.Email = request.Email;
                     obj.Address = request.Address;
@@ -141,6 +144,7 @@ namespace Hiephashop.Application.Service.Users
 
                     dbcontext.Update(obj);
                     dbcontext.SaveChanges();
+                    
                     return StatusCRUD.Success;
                 }
             }
@@ -157,7 +161,7 @@ namespace Hiephashop.Application.Service.Users
             {
                 using (var dbcontext = new ShopDbContext(_options))
                 {
-                    var list = dbcontext.Users.Where(o => o.Status);
+                    var list = dbcontext.Users.Where(o => o.Status).ToList();
                     var showList = new List<UserRequest>();
 
                     foreach (var item in list)
@@ -182,7 +186,7 @@ namespace Hiephashop.Application.Service.Users
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new List<UserRequest>();
             }
         }
 
@@ -216,7 +220,7 @@ namespace Hiephashop.Application.Service.Users
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return new UserUpdate();
             }
         }
     }
